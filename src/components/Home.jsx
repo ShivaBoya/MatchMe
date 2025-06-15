@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { FaBars, FaTimes, FaRobot, FaCheckCircle, FaComments, FaCrown } from 'react-icons/fa';
+import { useNavigate } from "react-router-dom";
+
 
 export default function Home() {
+    const navigate = useNavigate();
+
   const [mobileMenu, setMobileMenu] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
@@ -73,20 +77,21 @@ export default function Home() {
         </div>
 
         {/* Desktop Buttons */}
-        <div className="hidden md:flex gap-5 mr-12 transform hover:scale-105 transition-transform duration-300">
-          <button 
-            onClick={() => window.location.href = "/login"} 
-            className="bg-[#ff6aa4] text-[#6236ff] px-4 py-2 rounded-full font-medium hover:bg-[#eee] hover:scale-110 transition-all duration-300 transform hover:rotate-y-6 hover:shadow-2xl"
-          >
-            Login
-          </button>
-          <button 
-            onClick={() => window.location.href = "/register"} 
-            className="bg-[#ff6aa4] text-[#6236ff] px-4 py-2 rounded-full font-medium hover:bg-[#eee] hover:scale-110 transition-all duration-300 transform hover:rotate-y-6 hover:shadow-2xl"
-          >
-            Sign Up
-          </button>
-        </div>
+       <div className="hidden md:flex gap-5 mr-12 transform hover:scale-105 transition-transform duration-300">
+  <button 
+    onClick={() => navigate("/login")} 
+    className="bg-[#ff6aa4] text-[#6236ff] px-4 py-2 rounded-full font-medium hover:bg-[#eee] hover:scale-110 transition-all duration-300 transform hover:rotate-y-6 hover:shadow-2xl"
+  >
+    Login
+  </button>
+  <button 
+    onClick={() => navigate("/register")} 
+    className="bg-[#ff6aa4] text-[#6236ff] px-4 py-2 rounded-full font-medium hover:bg-[#eee] hover:scale-110 transition-all duration-300 transform hover:rotate-y-6 hover:shadow-2xl"
+  >
+    Sign Up
+  </button>
+</div>
+
 
         {/* Mobile Hamburger */}
         <div className="md:hidden flex items-center mr-4 z-50">
@@ -106,19 +111,25 @@ export default function Home() {
       {/* Mobile Menu */}
       {mobileMenu && (
         <div className="fixed top-16 right-4 bg-white text-black rounded-lg shadow-lg z-50 flex flex-col p-4 w-40 md:hidden animate-fade-in transform scale-100 hover:scale-105 transition-all duration-300">
-          <button 
-            onClick={() => { window.location.href = "/login"; setMobileMenu(false); }} 
-            className="mb-2 bg-pink-200 text-[#6236ff] px-4 py-2 rounded font-medium hover:bg-pink-300 transform hover:scale-105 hover:rotate-x-3 transition-all duration-300"
-          >
-            Login
-          </button>
-          <button 
-            onClick={() => { window.location.href = "/register"; setMobileMenu(false); }} 
-            className="bg-pink-200 text-[#6236ff] px-4 py-2 rounded font-medium hover:bg-pink-300 transform hover:scale-105 hover:rotate-x-3 transition-all duration-300"
-          >
-            Sign Up
-          </button>
-        </div>
+  <button 
+    onClick={() => { 
+      navigate("/login"); 
+      setMobileMenu(false); 
+    }} 
+    className="mb-2 bg-pink-200 text-[#6236ff] px-4 py-2 rounded font-medium hover:bg-pink-300 transform hover:scale-105 hover:rotate-x-3 transition-all duration-300"
+  >
+    Login
+  </button>
+  <button 
+    onClick={() => { 
+      navigate("/register"); 
+      setMobileMenu(false); 
+    }} 
+    className="bg-pink-200 text-[#6236ff] px-4 py-2 rounded font-medium hover:bg-pink-300 transform hover:scale-105 hover:rotate-x-3 transition-all duration-300"
+  >
+    Sign Up
+  </button>
+</div>
       )}
 
       {/* HERO SECTION */}
