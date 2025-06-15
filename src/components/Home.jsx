@@ -142,12 +142,12 @@ export default function Home() {
           Join millions of people finding meaningful relationships through <br /> our AI-powered matching system.
         </p>
         <div className="flex justify-center gap-4 flex-wrap animate-fade-in" style={{animationDelay: '0.4s'}}>
-          <a 
-            href="/register" 
-            className="bg-[#eb709f] text-[#6236ff] px-6 py-3 rounded-lg font-bold hover:bg-[#e0e0ff] hover:scale-110 transition-all duration-300 transform hover:rotate-y-6 hover:shadow-2xl"
-          >
-            Start Your Journey ⟶
-          </a>
+         <button 
+  onClick={() => navigate("/register")} 
+  className="bg-[#eb709f] text-[#6236ff] px-6 py-3 rounded-lg font-bold hover:bg-[#e0e0ff] hover:scale-110 transition-all duration-300 transform hover:rotate-y-6 hover:shadow-2xl"
+>
+  Start Your Journey ⟶
+</button>
           <a 
             href="#why" 
             className="border-2 border-white text-white px-6 py-3 rounded-lg font-bold hover:bg-white/10 hover:scale-110 transition-all duration-300 transform hover:rotate-y-6 hover:shadow-2xl"
@@ -236,13 +236,13 @@ export default function Home() {
         <p className="mt-2 transform hover:scale-105 transition-all duration-300 animate-fade-in" style={{animationDelay: '0.1s'}}>
           Join thousands of successful couples who found their soulmate on SoulConnect.
         </p>
-        <a 
-          href="/register" 
-          className="inline-block mt-6 bg-[#eb709f] text-[#6236ff] px-6 py-3 rounded-lg font-bold hover:bg-[#e0e0ff] hover:scale-110 transition-all duration-300 transform hover:rotate-y-6 hover:shadow-2xl animate-fade-in"
-          style={{animationDelay: '0.2s'}}
-        >
-          Get Started Today ⟶
-        </a>
+        <button
+  onClick={() => navigate("/register")}
+  className="inline-block mt-6 bg-[#eb709f] text-[#6236ff] px-6 py-3 rounded-lg font-bold hover:bg-[#e0e0ff] hover:scale-110 transition-all duration-300 transform hover:rotate-y-6 hover:shadow-2xl animate-fade-in"
+  style={{ animationDelay: '0.2s' }}
+>
+  Get Started Today ⟶
+</button>
       </section>
 
       {/* FOOTER */}
