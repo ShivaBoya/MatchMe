@@ -9,7 +9,6 @@ import {
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { auth, db } from "../firebase";
 
-// ✅ Sign Up Function
 export const signUp = async (email, password, userData) => {
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -42,7 +41,6 @@ export const signUp = async (email, password, userData) => {
   }
 };
 
-// ✅ Sign In Function
 export const signIn = async (email, password) => {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -52,7 +50,6 @@ export const signIn = async (email, password) => {
   }
 };
 
-// ✅ Sign Out Function
 export const logOut = async () => {
   try {
     await signOut(auth);
@@ -62,7 +59,6 @@ export const logOut = async () => {
   }
 };
 
-// ✅ Get User Profile (based on current user or provided uid)
 export const getUserProfile = async (uid = null) => {
   try {
     const currentUser = auth.currentUser;
@@ -77,7 +73,6 @@ export const getUserProfile = async (uid = null) => {
 
     if (docSnap.exists()) {
       const data = docSnap.data();
-      // Update emailVerified based on latest auth
       return {
         success: true,
         data: {
@@ -93,7 +88,6 @@ export const getUserProfile = async (uid = null) => {
   }
 };
 
-// ✅ Track Auth State
 export const subscribeToAuthChanges = (callback) => {
   return onAuthStateChanged(auth, callback);
 };

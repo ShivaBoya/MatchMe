@@ -191,7 +191,7 @@ const dummyUsers = [
 
 const Discover = () => {
   const [search, setSearch] = useState('');
-  const [chatUser, setChatUser] = useState(null);
+  //const [chatUser, setChatUser] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   
@@ -240,7 +240,6 @@ const Discover = () => {
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-[#182384] to-[#ce759a] text-white font-sans perspective-1000 overflow-hidden relative">
-      {/* Enhanced Floating Background Elements */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-20 left-10 w-32 h-32 bg-pink-500/20 rounded-full blur-xl animate-3d-float"></div>
         <div className="absolute top-40 right-20 w-24 h-24 bg-purple-500/20 rounded-full blur-xl animate-3d-float" style={{animationDelay: '1s'}}></div>
@@ -249,7 +248,6 @@ const Discover = () => {
         <div className="absolute top-1/2 left-1/2 w-16 h-16 bg-yellow-500/20 rounded-full blur-xl animate-3d-float" style={{animationDelay: '4s'}}></div>
       </div>
 
-      {/* Interactive Cursor Follow Effect */}
       <div 
         className="fixed w-6 h-6 bg-pink-400/30 rounded-full pointer-events-none z-10 transition-all duration-200 ease-out blur-sm"
         style={{
@@ -260,7 +258,6 @@ const Discover = () => {
       ></div>
 
       <div className="max-w-7xl mx-auto px-4 py-8 text-center relative z-10 transform-gpu pt-24">
-        {/* Enhanced Header with 3D Effects */}
         <div className={`mb-8 transform transition-all duration-1000 ease-out ${
           isLoaded ? 'animate-fade-in opacity-100 translate-y-0 rotate-x-0' : 'opacity-0 translate-y-12 rotate-x-45'
         }`}>
@@ -272,7 +269,6 @@ const Discover = () => {
           </p>
         </div>
 
-        {/* Enhanced Filters with 3D Glass Morphism */}
         <div className={`bg-white/10 backdrop-blur-md rounded-2xl p-8 shadow-2xl border border-white/20 transform transition-all duration-1000 ease-out hover:scale-105 hover:rotate-x-3 hover:shadow-[0_25px_50px_rgba(0,0,0,0.3)] preserve-3d group ${
           isLoaded ? 'animate-fade-in opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
         }`} style={{ animationDelay: '300ms' }}>
@@ -393,7 +389,6 @@ const Discover = () => {
         </div>
       </div>
 
-      {/* Enhanced 3D User Cards Grid */}
       <div className="max-w-7xl mx-auto grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 px-4 pb-24 perspective-2000 relative z-10">
         {filteredUsers.map((user, idx) => (
           <div 
@@ -406,7 +401,6 @@ const Discover = () => {
               transform: `translateZ(${idx * 10}px) rotateY(${Math.sin(idx) * 2}deg)`,
             }}
           >
-            {/* Enhanced Image Section with Parallax */}
             <div className="relative overflow-hidden">
               <img 
                 src={user.image} 
@@ -416,7 +410,6 @@ const Discover = () => {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent group-hover:from-black/60 transition-all duration-700"></div>
               
-              {/* Floating Badges with Enhanced Animation */}
               <div className="absolute top-3 left-3 flex gap-2 transform transition-all duration-700 group-hover:translate-x-3 group-hover:-translate-y-2 group-hover:rotate-3">
                 {user.verified && (
                   <span className="bg-green-500 text-white text-xs px-3 py-1.5 rounded-full transform transition-all duration-500 hover:scale-125 hover:rotate-12 shadow-lg backdrop-blur-sm animate-pulse">
@@ -430,18 +423,15 @@ const Discover = () => {
                 )}
               </div>
               
-              {/* Enhanced Trust Score */}
               <div className="absolute top-3 right-3 bg-white/95 text-black text-xs px-3 py-1.5 rounded-full font-bold shadow-xl transform transition-all duration-700 group-hover:-translate-x-3 group-hover:-translate-y-2 group-hover:rotate-6 group-hover:shadow-[0_0_20px_rgba(255,255,255,0.5)] backdrop-blur-sm">
                 {user.trust}% Trust ⭐
               </div>
 
-              {/* Floating Heart Animation */}
               <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-500 transform group-hover:scale-110 group-hover:rotate-12">
                 <div className="text-pink-300 text-2xl animate-pulse">💖</div>
               </div>
             </div>
             
-            {/* Enhanced Content Section */}
             <div className="p-4 transform transition-all duration-700 group-hover:translate-y-1 relative">
               <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-b-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
               
@@ -474,7 +464,6 @@ const Discover = () => {
                 ))}
               </div>
               
-              {/* Enhanced Action Buttons */}
               <div className="flex justify-between items-center mt-4 gap-3 relative z-10">
                 <button className="bg-black/60 backdrop-blur-md px-4 py-2 rounded-full hover:bg-black/80 transform transition-all duration-500 hover:scale-110 hover:rotate-3 hover:-translate-y-2 shadow-lg hover:shadow-2xl border border-white/20 hover:border-red-400">
                   ❌ Pass
@@ -493,7 +482,6 @@ const Discover = () => {
               </div>
             </div>
 
-            {/* Magic Sparkle Effect */}
             <div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700">
               <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-yellow-300 rounded-full animate-ping"></div>
               <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-pink-300 rounded-full animate-ping" style={{animationDelay: '0.5s'}}></div>
