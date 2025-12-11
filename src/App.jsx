@@ -8,36 +8,40 @@ import Home from "./components/Home";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
 import Dashboard from "./components/Dashboard";
-import Matches from "./pages/Mathecs"; 
+import Matches from "./pages/Matches";
 import Messages from "./pages/Messages";
 import PremiumPopup from "./pages/Premium";
 import Navbar from "./components/Navbar";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
-import Discover from "./pages/Discover"; 
+import Discover from "./pages/Discover";
 function App() {
   const [user, setUser] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("Discover");
   const [showPremium, setShowPremium] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [profileMenu, setProfileMenu] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      // Set user and stop loading immediately to show UI
+      setUser(currentUser);
+      setLoading(false);
+
       if (currentUser) {
-        setUser(currentUser);
-        const docRef = doc(db, "users", currentUser.uid);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setUserProfile(docSnap.data());
+        try {
+          const docRef = doc(db, "users", currentUser.uid);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            setUserProfile(docSnap.data());
+          }
+        } catch (error) {
+          console.error("Error fetching user profile:", error);
         }
       } else {
-        setUser(null);
         setUserProfile(null);
       }
-      setLoading(false);
     });
 
     return () => unsubscribe();
@@ -59,13 +63,11 @@ function App() {
   return (
     <Router>
       <div className="App min-h-screen bg-gradient-to-br from-[#182384] to-[#ce759a] text-white">
-        {user && userProfile && (
+        {user && (
           <Navbar
             user={user}
             userProfile={userProfile}
             setUserProfile={setUserProfile}
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
             setShowPremium={setShowPremium}
             handleLogout={handleLogout}
             showMenu={showMenu}
@@ -84,14 +86,14 @@ function App() {
             <Route path="/signup" element={user ? <Navigate to="/dashboard" /> : <Signup />} />
             <Route path="/register" element={user ? <Navigate to="/dashboard" /> : <Signup />} />
 
-          
-            <Route path="/dashboard" element={user ? <Dashboard user={user} activeTab={activeTab} /> : <Navigate to="/login" />} />
+
+            <Route path="/dashboard" element={user ? <Dashboard user={user} /> : <Navigate to="/login" />} />
             <Route path="/discover" element={user ? <Discover /> : <Navigate to="/login" />} />
             <Route path="/matches" element={user ? <Matches user={user} /> : <Navigate to="/login" />} />
             <Route path="/messages/:userId" element={user ? <Messages user={user} /> : <Navigate to="/login" />} />
             <Route path="/messages" element={user ? <Messages user={user} /> : <Navigate to="/login" />} />
 
-           
+
             <Route
               path="/profile"
               element={
@@ -107,7 +109,7 @@ function App() {
               element={user ? <Settings user={user} userProfile={userProfile} /> : <Navigate to="/login" />}
             />
 
-            
+
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </div>

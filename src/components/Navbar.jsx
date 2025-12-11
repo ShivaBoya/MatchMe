@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, NavLink, Link } from "react-router-dom";
 import {
   FaSearch,
   FaUserFriends,
@@ -12,8 +12,6 @@ import {
 const TopNavBar = ({
   userProfile,
   user,
-  activeTab,
-  setActiveTab,
   setShowPremium,
   handleLogout,
   showMenu,
@@ -24,59 +22,38 @@ const TopNavBar = ({
   const navigate = useNavigate();
   const profileImage = userProfile?.photoURL || user?.photoURL;
 
+  const navLinkClass = ({ isActive }) =>
+    `px-4 py-2 rounded-full flex items-center gap-2 transition-transform hover:scale-105 ${isActive ? "text-purple-700 font-semibold bg-white/20" : "text-white"
+    }`;
+
+  const mobileNavLinkClass = "flex items-center gap-2 px-2 py-1 hover:bg-gray-100 rounded text-gray-700";
+
   return (
     <nav className="sticky top-0 z-50 backdrop-blur-md bg-white/10 shadow-md px-6 py-4">
       <div className="max-w-[1280px] mx-auto flex items-center justify-between relative">
-        <h2
-          onClick={() => {
-            setActiveTab("Discover"); // optional: set the active tab
-            navigate("/dashboard");
-          }}
+        <Link
+          to="/dashboard"
           className="text-2xl font-bold text-pink-300 cursor-pointer hover:scale-105 transition-transform"
         >
           💗Soul<span className="text-purple-300">Connect</span>
-        </h2>
+        </Link>
 
         {/* Desktop Nav */}
         <div className="hidden md:flex gap-3 ml-10">
-          <button
-            onClick={() => {
-              setActiveTab("Discover");
-              navigate("/discover");
-            }}
-            className={`px-4 py-2 rounded-full flex items-center gap-2 transition-transform hover:scale-105 ${
-              activeTab === "Discover" ? " text-purple-700 font-semibold" : ""
-            }`}
-          >
+          <NavLink to="/discover" className={navLinkClass}>
             <FaSearch />
             Discover
-          </button>
+          </NavLink>
 
-          <button
-            onClick={() => {
-              setActiveTab("Matches");
-              navigate("/matches");
-            }}
-            className={`px-4 py-2 rounded-full flex items-center gap-2 transition-transform hover:scale-105 ${
-              activeTab === "Matches" ? " text-purple-700 font-semibold" : ""
-            }`}
-          >
+          <NavLink to="/matches" className={navLinkClass}>
             <FaUserFriends />
             Matches
-          </button>
+          </NavLink>
 
-          <button
-            onClick={() => {
-              setActiveTab("Messages");
-              navigate("/messages");
-            }}
-            className={`px-4 py-2 rounded-full flex items-center gap-2 transition-transform hover:scale-105 ${
-              activeTab === "Messages" ? " text-purple-700 font-semibold" : ""
-            }`}
-          >
+          <NavLink to="/messages" className={navLinkClass}>
             <FaComments />
             Messages
-          </button>
+          </NavLink>
 
           <button
             onClick={() => setShowPremium(true)}
@@ -109,26 +86,21 @@ const TopNavBar = ({
 
           {profileMenu && (
             <div className="absolute right-0 top-12 bg-white text-black w-40 rounded-md shadow-lg z-50">
-              <button
-                onClick={() => {
-                  navigate("/profile");
-                  setProfileMenu(false);
-                  setActiveTab("Profile"); // optional: only if you're using this tab for styling elsewhere
-                }}
-                className="w-full text-left px-4 py-2 hover:bg-gray-100"
+              <Link
+                to="/profile"
+                onClick={() => setProfileMenu(false)}
+                className="w-full block text-left px-4 py-2 hover:bg-gray-100"
               >
                 My Profile
-              </button>
+              </Link>
 
-              <button
-                onClick={() => {
-                  navigate("/settings");
-                  setProfileMenu(false);
-                }}
-                className="w-full text-left px-4 py-2 hover:bg-gray-100"
+              <Link
+                to="/settings"
+                onClick={() => setProfileMenu(false)}
+                className="w-full block text-left px-4 py-2 hover:bg-gray-100"
               >
                 Settings
-              </button>
+              </Link>
 
               <button
                 onClick={handleLogout}
@@ -153,51 +125,43 @@ const TopNavBar = ({
             </div>
             <hr className="border-gray-300 my-2" />
 
-            <button
-              onClick={() => {
-                setActiveTab("Discover");
-                setShowMenu(false);
-                navigate("/discover");
-              }}
-              className="flex items-center gap-2 px-2 py-1 hover:bg-gray-100 rounded"
+            <Link
+              to="/discover"
+              onClick={() => setShowMenu(false)}
+              className={mobileNavLinkClass}
             >
               <FaSearch /> Discover
-            </button>
-            <button
-              onClick={() => {
-                setActiveTab("Matches");
-                setShowMenu(false);
-                navigate("/matches");
-              }}
-              className="flex items-center gap-2 px-2 py-1 hover:bg-gray-100 rounded"
+            </Link>
+
+            <Link
+              to="/matches"
+              onClick={() => setShowMenu(false)}
+              className={mobileNavLinkClass}
             >
               <FaUserFriends /> Matches
-            </button>
+            </Link>
+
+            <Link
+              to="/messages"
+              onClick={() => setShowMenu(false)}
+              className={mobileNavLinkClass}
+            >
+              <FaComments /> Messages
+            </Link>
 
             <button
               onClick={() => {
-                setActiveTab("Messages");
+                setShowPremium(true);
                 setShowMenu(false);
-                navigate("/messages");
               }}
-              className="flex items-center gap-2 px-2 py-1 hover:bg-gray-100 rounded"
-            >
-              <FaComments /> Messages
-            </button>
-            <button
-              onClick={() => {
-                setActiveTab("Premium");
-                setShowMenu(false);
-                navigate("/premium");
-              }}
-              className="flex items-center gap-2 px-2 py-1 hover:bg-gray-100 rounded"
+              className={mobileNavLinkClass + " w-full text-left"}
             >
               <FaStar /> Premium
             </button>
 
             <button
               onClick={handleLogout}
-              className="flex items-center gap-2 px-2 py-1 hover:bg-gray-100 rounded"
+              className={mobileNavLinkClass + " w-full text-left"}
             >
               Logout
             </button>

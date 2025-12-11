@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { signUp } from "../context/auth";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { signOut } from "firebase/auth";
+import { auth } from "../firebase";
 
 const Signup = ({ onSignup }) => {
   const [formData, setFormData] = useState({
@@ -27,6 +29,8 @@ const Signup = ({ onSignup }) => {
       [e.target.name]: e.target.value
     });
   };
+
+  const navigate = useNavigate();
 
   const handleNextStep = () => {
     if (step === 1) {
@@ -60,7 +64,9 @@ const Signup = ({ onSignup }) => {
     const result = await signUp(formData.email, formData.password, userData);
 
     if (result.success) {
-      onSignup(result.user);
+      alert("Account created successfully! Please log in.");
+      await signOut(auth);
+      navigate("/login");
     } else {
       setError(result.error);
     }

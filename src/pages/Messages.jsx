@@ -39,19 +39,48 @@ export default function Messages({ user }) {
     description: "Your intelligent AI companion"
   };
 
-  // Fetch all users except the current user + AI Assistant
+  // Mock Users for Fallback
+  const mockChatUsers = [
+    { id: "101", name: "Sophia", avatar: "https://randomuser.me/api/portraits/women/63.jpg", status: "Online" },
+    { id: "102", name: "Rohan", avatar: "https://randomuser.me/api/portraits/men/32.jpg", status: "Last seen 5m ago" },
+    { id: "103", name: "Zara", avatar: "https://randomuser.me/api/portraits/women/44.jpg", status: "Online" },
+    { id: "104", name: "Vikram", avatar: "https://randomuser.me/api/portraits/men/45.jpg", status: "Offline" },
+  ];
+
+  // Fetch all users with robust fallback
   useEffect(() => {
-    const fetchAllUsers = async () => {
-      const snapshot = await getDocs(collection(db, "users"));
-      const users = snapshot.docs
-        .map((doc) => ({ id: doc.id, ...doc.data() }))
-        .filter((u) => u.id !== user.uid);
-      
-      // Add AI Assistant to the users list
-      setAllUsers([aiAssistant, ...users]);
+    const fetchUsers = async () => {
+      try {
+        const usersRef = collection(db, "users");
+
+        // Timeout Promise
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Request timed out")), 2000)
+        );
+
+        // Race
+        const querySnapshot = await Promise.race([
+          getDocs(usersRef),
+          timeoutPromise
+        ]);
+
+        const users = querySnapshot.docs
+          .map((doc) => ({ id: doc.id, ...doc.data() }))
+          .filter((u) => u.id !== user.uid);
+
+        if (users.length === 0) {
+          console.warn("No users found in DB, using mock chat users");
+          setAllUsers([aiAssistant, ...mockChatUsers]);
+        } else {
+          setAllUsers([aiAssistant, ...users]);
+        }
+      } catch (error) {
+        console.warn("Network slow or data missing in Messages, using offline mode:", error.message);
+        setAllUsers([aiAssistant, ...mockChatUsers]);
+      }
     };
 
-    fetchAllUsers();
+    fetchUsers();
   }, [user.uid]);
 
   // Fetch chat user details
@@ -74,10 +103,10 @@ export default function Messages({ user }) {
           avatar: data.avatar || "https://randomuser.me/api/portraits/men/34.jpg",
         });
       } else {
-        setChatUser({ 
-          id: userId, 
-          name: "Deleted User", 
-          avatar: "https://randomuser.me/api/portraits/men/34.jpg" 
+        setChatUser({
+          id: userId,
+          name: "Deleted User",
+          avatar: "https://randomuser.me/api/portraits/men/34.jpg"
         });
       }
     };
@@ -103,7 +132,7 @@ export default function Messages({ user }) {
         };
       });
       setMessages(msgs);
-      
+
       // Update conversation context for AI
       if (userId === "ai-assistant") {
         const context = msgs.map(msg => ({
@@ -122,14 +151,14 @@ export default function Messages({ user }) {
     try {
       // Simulate AI thinking time
       setAiTyping(true);
-      
+
       // Enhanced AI responses based on context and patterns
       const responses = await getContextualAIResponse(userMessage, context);
-      
+
       setTimeout(() => {
         setAiTyping(false);
       }, 1500);
-      
+
       return responses;
     } catch (error) {
       console.error("AI Reply Error:", error);
@@ -140,7 +169,7 @@ export default function Messages({ user }) {
 
   const getContextualAIResponse = async (message, context) => {
     const lowerMsg = message.toLowerCase();
-    
+
     // Greeting responses
     if (lowerMsg.includes("hi") || lowerMsg.includes("hello") || lowerMsg.includes("hey")) {
       const greetings = [
@@ -151,7 +180,7 @@ export default function Messages({ user }) {
       ];
       return greetings[Math.floor(Math.random() * greetings.length)];
     }
-    
+
     // How are you responses
     if (lowerMsg.includes("how are you")) {
       const statusResponses = [
@@ -162,7 +191,7 @@ export default function Messages({ user }) {
       ];
       return statusResponses[Math.floor(Math.random() * statusResponses.length)];
     }
-    
+
     // Question responses
     if (lowerMsg.includes("?")) {
       const questionResponses = [
@@ -173,17 +202,17 @@ export default function Messages({ user }) {
       ];
       return questionResponses[Math.floor(Math.random() * questionResponses.length)];
     }
-    
+
     // Help requests
     if (lowerMsg.includes("help") || lowerMsg.includes("assist") || lowerMsg.includes("support")) {
       return "I'm here to help! I can assist you with various topics, answer questions, provide advice, or just have a friendly conversation. What specifically would you like help with? 🤝";
     }
-    
+
     // Technology related
     if (lowerMsg.includes("code") || lowerMsg.includes("programming") || lowerMsg.includes("tech")) {
       return "I love talking about technology! 💻 Whether it's coding, software development, or the latest tech trends, I'm here to help. What specific tech topic interests you?";
     }
-    
+
     // Farewell responses
     if (lowerMsg.includes("bye") || lowerMsg.includes("goodbye") || lowerMsg.includes("see you")) {
       const farewells = [
@@ -194,7 +223,7 @@ export default function Messages({ user }) {
       ];
       return farewells[Math.floor(Math.random() * farewells.length)];
     }
-    
+
     // Default contextual responses
     const contextualResponses = [
       `That's really interesting! "${message}" makes me think about how interconnected everything is. Tell me more about your perspective on this.`,
@@ -203,7 +232,7 @@ export default function Messages({ user }) {
       `That's a fascinating point about "${message}". I'd love to explore this topic further with you. What's your experience with this?`,
       `Your message about "${message}" really resonates with me. I think there are multiple angles to consider here. What's your take?`
     ];
-    
+
     return contextualResponses[Math.floor(Math.random() * contextualResponses.length)];
   };
 
@@ -212,7 +241,7 @@ export default function Messages({ user }) {
 
     const currentChatId = userId === "ai-assistant" ? aiChatId : chatId;
     const messagesRef = collection(db, "chats", currentChatId, "messages");
-    
+
     const message = {
       from: user.uid,
       to: userId,
@@ -227,7 +256,7 @@ export default function Messages({ user }) {
     // AI Auto-reply for AI Assistant
     if (userId === "ai-assistant") {
       const aiReply = await generateAdvancedAIReply(sentMessage, conversationContext);
-      
+
       setTimeout(async () => {
         const aiMessage = {
           from: "ai-assistant",
@@ -287,12 +316,12 @@ export default function Messages({ user }) {
 
       <div className="max-w-7xl mx-auto px-4 py-8 text-center relative z-10">
         <div className="flex flex-col md:flex-row bg-white/10 backdrop-blur-xl rounded-3xl overflow-hidden shadow-2xl w-full max-w-5xl mx-auto border border-white/20 animate-fade-in transform-gpu">
-          
+
           {/* Sidebar with 3D Effects */}
           <div className="w-full md:w-1/3 border-r border-white/10 p-4 space-y-4 relative overflow-hidden">
             {/* Animated gradient background */}
             <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-600/5 to-pink-500/5 animate-gradient-shift"></div>
-            
+
             <div className="flex items-center justify-between relative z-10">
               <h2 className="text-xl font-semibold mb-4 text-transparent bg-gradient-to-r from-blue-400 to-purple-600 bg-clip-text animate-pulse">Messages</h2>
               <button
@@ -303,7 +332,7 @@ export default function Messages({ user }) {
                 <Bot className="w-5 h-5 group-hover:rotate-12 transition-transform duration-300" />
               </button>
             </div>
-            
+
             <input
               type="text"
               placeholder="Search conversations..."
@@ -328,9 +357,8 @@ export default function Messages({ user }) {
                 <div
                   key={u.id}
                   onClick={() => navigate(`/messages/${u.id}`)}
-                  className={`flex items-center gap-3 p-2 rounded-xl cursor-pointer hover:bg-white/15 transition-all duration-300 transform-gpu hover:scale-105 hover:shadow-lg group animate-slide-in-left ${
-                    userId === u.id ? "bg-white/10 border border-white/20 shadow-lg scale-105" : ""
-                  }`}
+                  className={`flex items-center gap-3 p-2 rounded-xl cursor-pointer hover:bg-white/15 transition-all duration-300 transform-gpu hover:scale-105 hover:shadow-lg group animate-slide-in-left ${userId === u.id ? "bg-white/10 border border-white/20 shadow-lg scale-105" : ""
+                    }`}
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
                   <div className="relative">
@@ -377,7 +405,7 @@ export default function Messages({ user }) {
           <div className="w-full md:w-2/3 p-4 flex flex-col justify-between relative overflow-hidden">
             {/* Animated gradient overlay */}
             <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-pink-500/5 to-blue-500/5 animate-gradient-shift-reverse"></div>
-            
+
             {/* Header with floating effect */}
             <div className="flex items-center justify-between mb-4 relative z-10 animate-slide-down">
               <div className="flex items-center gap-3 group">
@@ -396,8 +424,8 @@ export default function Messages({ user }) {
                 <div>
                   <p className="font-semibold group-hover:text-blue-300 transition-colors duration-300">{chatUser?.name || "Select a user"}</p>
                   <p className="text-sm text-white/60 group-hover:text-white/80 transition-colors duration-300">
-                    {chatUser ? 
-                      (isAIMode ? "AI Assistant - Always here to help!" : `Chatting with ${chatUser.name}`) : 
+                    {chatUser ?
+                      (isAIMode ? "AI Assistant - Always here to help!" : `Chatting with ${chatUser.name}`) :
                       "No conversation selected"
                     }
                   </p>
@@ -423,17 +451,16 @@ export default function Messages({ user }) {
                   <p className="text-sm animate-slide-up" style={{ animationDelay: '0.2s' }}>I'm here to help you with anything. Just start a conversation!</p>
                 </div>
               )}
-              
+
               {messages.map((msg, i) => (
                 <div
                   key={msg.id || i}
-                  className={`max-w-[75%] p-3 rounded-2xl transition-all duration-500 transform-gpu animate-slide-in-up hover:scale-105 ${
-                    msg.fromMe
-                      ? "ml-auto bg-gradient-to-br from-pink-400 to-purple-500 shadow-lg hover:shadow-2xl hover:from-pink-500 hover:to-purple-600"
-                      : isAIMode 
-                        ? "bg-gradient-to-br from-blue-500/20 to-purple-600/20 border border-blue-400/30 shadow-lg hover:shadow-2xl hover:from-blue-500/30 hover:to-purple-600/30 backdrop-blur-sm"
-                        : "bg-white/10 hover:bg-white/15 backdrop-blur-sm"
-                  }`}
+                  className={`max-w-[75%] p-3 rounded-2xl transition-all duration-500 transform-gpu animate-slide-in-up hover:scale-105 ${msg.fromMe
+                    ? "ml-auto bg-gradient-to-br from-pink-400 to-purple-500 shadow-lg hover:shadow-2xl hover:from-pink-500 hover:to-purple-600"
+                    : isAIMode
+                      ? "bg-gradient-to-br from-blue-500/20 to-purple-600/20 border border-blue-400/30 shadow-lg hover:shadow-2xl hover:from-blue-500/30 hover:to-purple-600/30 backdrop-blur-sm"
+                      : "bg-white/10 hover:bg-white/15 backdrop-blur-sm"
+                    }`}
                   style={{ animationDelay: `${i * 0.1}s` }}
                 >
                   <p className="leading-relaxed">{msg.message}</p>
@@ -445,15 +472,15 @@ export default function Messages({ user }) {
                   )}
                 </div>
               ))}
-              
+
               {aiTyping && (
                 <div className="max-w-[75%] p-3 rounded-2xl bg-gradient-to-br from-blue-500/20 to-purple-600/20 border border-blue-400/30 backdrop-blur-sm animate-fade-in">
                   <div className="flex items-center gap-2">
                     <Bot className="w-4 h-4 text-blue-400 animate-bounce" />
                     <div className="flex gap-1">
                       <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"></div>
-                      <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                      <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                      <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                      <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                     </div>
                     <span className="text-xs text-white/60">AI is thinking...</span>
                   </div>
@@ -474,11 +501,10 @@ export default function Messages({ user }) {
                 />
                 <button
                   onClick={sendMessage}
-                  className={`p-3 rounded-full transition-all duration-300 shadow-lg hover:shadow-2xl transform-gpu hover:scale-110 active:scale-95 group ${
-                    isAIMode 
-                      ? "bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700" 
-                      : "bg-pink-500 hover:bg-pink-600"
-                  }`}
+                  className={`p-3 rounded-full transition-all duration-300 shadow-lg hover:shadow-2xl transform-gpu hover:scale-110 active:scale-95 group ${isAIMode
+                    ? "bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+                    : "bg-pink-500 hover:bg-pink-600"
+                    }`}
                   disabled={aiTyping}
                 >
                   <Send className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />

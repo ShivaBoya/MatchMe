@@ -1,8 +1,12 @@
 import { useState } from "react";
-import { signIn } from "../context/auth";
 import { Link } from "react-router-dom";
+import { auth, db } from "../firebase";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
+import { FaGoogle } from "react-icons/fa";
+import { signIn } from "../context/auth";
 
-const Login = ({ onLogin }) => {
+const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: ""
@@ -17,6 +21,49 @@ const Login = ({ onLogin }) => {
     });
   };
 
+  const handleGoogleLogin = async () => {
+    try {
+      setLoading(true);
+      setError("");
+
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      // Check if user document exists in Firestore
+      const userDocRef = doc(db, "users", user.uid);
+      const userDocSnap = await getDoc(userDocRef);
+
+      if (!userDocSnap.exists()) {
+        // Create new user profile for first-time Google login
+        await setDoc(userDocRef, {
+          name: user.displayName,
+          email: user.email,
+          image: user.photoURL,
+          bio: "Hey there! I'm using MatchMe. ✨",
+          age: "",
+          location: "",
+          profession: "",
+          hobbies: [],
+          gender: "Not Specified",
+          isOnline: true,
+          role: "user",
+          verified: false,
+          premium: false,
+          trust: 80,
+          createdAt: serverTimestamp()
+        });
+      }
+
+      // Auth listener in App.jsx will handle redirect
+    } catch (err) {
+      console.error("Google Sign-In Error:", err);
+      setError("Google Sign-In failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -24,7 +71,7 @@ const Login = ({ onLogin }) => {
 
     const result = await signIn(formData.email, formData.password);
     if (result.success) {
-      onLogin(result.user);
+      // Login successful, auth listener in App.jsx will handle redirect
     } else {
       setError(result.error);
     }
@@ -34,17 +81,17 @@ const Login = ({ onLogin }) => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#182384] to-[#ce759a] px-4">
       <div className="w-full max-w-md bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-white/20 relative overflow-hidden">
-        
+
         {/* Decorative Top Gradient Strip */}
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-pink-400 via-purple-400 to-indigo-500" />
 
         <div className="text-center mb-6 z-10 relative">
-           <Link to="/" className="inline-block text-5xl mb-2 hover:scale-110 transition-transform duration-200">
-             💖
-           </Link>
-                <h2 className="text-4xl font-extrabold text-white drop-shadow-md">Welcome Back</h2>
-                <p className="mt-2 text-sm text-white/70">Login to your SoulConnect account</p>
-           </div>
+          <Link to="/" className="inline-block text-5xl mb-2 hover:scale-110 transition-transform duration-200">
+            💖
+          </Link>
+          <h2 className="text-4xl font-extrabold text-white drop-shadow-md">Welcome Back</h2>
+          <p className="mt-2 text-sm text-white/70">Login to your SoulConnect account</p>
+        </div>
 
 
         <form onSubmit={handleSubmit} className="space-y-5 z-10 relative">
@@ -65,7 +112,7 @@ const Login = ({ onLogin }) => {
               required
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-white/30 rounded-lg bg-white/10 text-white placeholder-white/70" 
+              className="w-full px-3 py-2 border border-white/30 rounded-lg bg-white/10 text-white placeholder-white/70"
               placeholder="Enter your email"
             />
           </div>
@@ -81,7 +128,7 @@ const Login = ({ onLogin }) => {
               required
               value={formData.password}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-white/30 rounded-lg bg-white/10 text-white placeholder-white/70" 
+              className="w-full px-3 py-2 border border-white/30 rounded-lg bg-white/10 text-white placeholder-white/70"
               placeholder="Enter your password"
             />
           </div>
@@ -98,6 +145,28 @@ const Login = ({ onLogin }) => {
               </div>
             ) : (
               "Sign In"
+            )}
+          </button>
+
+          <div className="relative flex items-center justify-center my-4 opacity-70">
+            <div className="border-t border-white/30 w-full"></div>
+            <span className="bg-transparent px-3 text-white text-xs uppercase tracking-wide">Or</span>
+            <div className="border-t border-white/30 w-full"></div>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleGoogleLogin}
+            disabled={loading}
+            className="w-full py-3 rounded-lg bg-white hover:bg-white/90 text-gray-900 font-semibold shadow-md transition-all duration-200 flex items-center justify-center gap-3 transform hover:scale-[1.02]"
+          >
+            {loading ? (
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-900"></div>
+            ) : (
+              <>
+                <FaGoogle className="text-red-500 text-lg" />
+                <span>Continue with Google</span>
+              </>
             )}
           </button>
 

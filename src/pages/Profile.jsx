@@ -37,6 +37,7 @@ export default function Profile({ user, userProfile, setUserProfile }) {
           const data = docSnap.data();
           setProfileData({
             ...data,
+            hobbies: Array.isArray(data.hobbies) ? data.hobbies.join(', ') : data.hobbies || '',
             partnerPreferences: {
               ageRange: '',
               location: '',
@@ -72,22 +73,44 @@ export default function Profile({ user, userProfile, setUserProfile }) {
   };
 
   const handleSave = async () => {
+    console.log("Attempting to save profile for user:", user?.uid);
     try {
+      let updatedData = { ...profileData };
+
+      // Convert hobbies string to array for consistency with other components
+      if (typeof updatedData.hobbies === 'string') {
+        updatedData.hobbies = updatedData.hobbies.split(',').map(h => h.trim()).filter(h => h);
+      }
+
       if (newPic) {
+        console.log("Uploading new profile picture...");
         const picRef = storageRef(storage, `profilePics/${user.uid}/${newPic.name}`);
         await uploadBytes(picRef, newPic);
         const url = await getDownloadURL(picRef);
-        profileData.profilePicUrl = url;
+        console.log("Profile picture uploaded, URL:", url);
+        updatedData.profilePicUrl = url;
       }
 
+      console.log("Saving data to Firestore:", updatedData);
       const profileDoc = doc(db, 'users', user.uid);
-      await setDoc(profileDoc, profileData);
-      setUserProfile(profileData);
+      await setDoc(profileDoc, updatedData, { merge: true });
+
+      console.log("Save successful!");
+      setUserProfile(updatedData);
+
+      // Keep local state in sync (keep hobbies as string in the form if needed, or update to array? 
+      // Better to keep UI in string mode if we stay in edit mode, but we exit edit mode here.)
+      setProfileData(prev => ({
+        ...prev,
+        ...updatedData,
+        hobbies: Array.isArray(updatedData.hobbies) ? updatedData.hobbies.join(', ') : updatedData.hobbies // Convert back for display/next edit
+      }));
+
       setIsEditing(false);
       alert("Profile updated successfully!");
     } catch (error) {
       console.error("Error updating profile:", error);
-      alert("Failed to update profile.");
+      alert(`Failed to update profile: ${error.message} (Check console for details)`);
     }
   };
 
@@ -107,10 +130,9 @@ export default function Profile({ user, userProfile, setUserProfile }) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#182384] to-[#ce759a] perspective-1000 py-10 px-4">
-      <div className={`max-w-4xl mx-auto p-8 bg-white/10 backdrop-blur-md shadow-2xl rounded-2xl text-white transform-gpu transition-all duration-700 ${
-        isLoaded ? 'animate-fade-in opacity-100 translate-y-0 rotate-x-0' : 'opacity-0 translate-y-12 rotate-x-45'
-      } hover:scale-105 hover:shadow-2xl hover:rotate-x-3 preserve-3d`}>
-        
+      <div className={`max-w-4xl mx-auto p-8 bg-white/10 backdrop-blur-md shadow-2xl rounded-2xl text-white transform-gpu transition-all duration-700 ${isLoaded ? 'animate-fade-in opacity-100 translate-y-0 rotate-x-0' : 'opacity-0 translate-y-12 rotate-x-45'
+        } hover:scale-105 hover:shadow-2xl hover:rotate-x-3 preserve-3d`}>
+
         {/* Header with 3D Animation */}
         <h2 className="text-4xl font-bold text-center mb-8 transform transition-all duration-500 hover:scale-110 hover:text-pink-300 hover:rotate-3 bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent animate-3d-float">
           My Profile
@@ -144,20 +166,19 @@ export default function Profile({ user, userProfile, setUserProfile }) {
             {/* Personal Information Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {['name', 'age', 'gender', 'location', 'religion', 'hobbies', 'education', 'profession'].map((field, index) => (
-                <div 
-                  key={field} 
+                <div
+                  key={field}
                   className={fieldStyles}
-                  style={{ 
+                  style={{
                     animationDelay: `${index * 100}ms`,
-                    transform: `translateZ(${index * 5}px)` 
+                    transform: `translateZ(${index * 5}px)`
                   }}
                   onMouseEnter={() => setHoveredField(field)}
                   onMouseLeave={() => setHoveredField(null)}
                 >
                   <div className="flex items-center space-x-3">
-                    <div className={`w-3 h-3 rounded-full bg-gradient-to-r from-pink-400 to-purple-500 transform transition-all duration-300 ${
-                      hoveredField === field ? 'scale-150 rotate-180' : 'scale-100'
-                    }`}></div>
+                    <div className={`w-3 h-3 rounded-full bg-gradient-to-r from-pink-400 to-purple-500 transform transition-all duration-300 ${hoveredField === field ? 'scale-150 rotate-180' : 'scale-100'
+                      }`}></div>
                     <div>
                       <strong className="text-pink-300 text-sm font-semibold transform transition-all duration-300 group-hover:scale-110 block">
                         {field.charAt(0).toUpperCase() + field.slice(1)}
@@ -178,12 +199,12 @@ export default function Profile({ user, userProfile, setUserProfile }) {
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {['ageRange', 'location', 'religion', 'education'].map((pref, index) => (
-                  <div 
-                    key={pref} 
+                  <div
+                    key={pref}
                     className={fieldStyles}
-                    style={{ 
+                    style={{
                       animationDelay: `${(index + 8) * 100}ms`,
-                      transform: `translateZ(${(index + 8) * 5}px)` 
+                      transform: `translateZ(${(index + 8) * 5}px)`
                     }}
                   >
                     <div className="flex items-center space-x-3">
@@ -227,10 +248,10 @@ export default function Profile({ user, userProfile, setUserProfile }) {
                   </div>
                 )}
               </div>
-              <input 
-                type="file" 
-                onChange={handleFileChange} 
-                className={`${inputStyles} mt-4 w-full max-w-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-pink-500 file:text-white hover:file:bg-pink-600`} 
+              <input
+                type="file"
+                onChange={handleFileChange}
+                className={`${inputStyles} mt-4 w-full max-w-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-pink-500 file:text-white hover:file:bg-pink-600`}
               />
               <select
                 name="profilePicPrivacy"
