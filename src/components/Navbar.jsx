@@ -12,7 +12,6 @@ import {
 const TopNavBar = ({
   userProfile,
   user,
-  setShowPremium,
   handleLogout,
   showMenu,
   setShowMenu,
@@ -55,13 +54,15 @@ const TopNavBar = ({
             Messages
           </NavLink>
 
-          <button
-            onClick={() => setShowPremium(true)}
-            className="px-4 py-2 rounded-full flex items-center gap-2 transition-transform hover:scale-105 bg-white text-yellow-600 font-semibold"
+          <NavLink
+            to="/premium"
+            className={({ isActive }) =>
+              `px-4 py-2 rounded-full flex items-center gap-2 transition-transform hover:scale-105 bg-white text-yellow-600 font-semibold ${isActive ? "ring-2 ring-yellow-400" : ""}`
+            }
           >
             <FaStar />
             Premium
-          </button>
+          </NavLink>
         </div>
 
         {/* Profile section */}
@@ -149,15 +150,13 @@ const TopNavBar = ({
               <FaComments /> Messages
             </Link>
 
-            <button
-              onClick={() => {
-                setShowPremium(true);
-                setShowMenu(false);
-              }}
-              className={mobileNavLinkClass + " w-full text-left"}
+            <Link
+              to="/premium"
+              onClick={() => setShowMenu(false)}
+              className={mobileNavLinkClass + " w-full text-left text-yellow-600 font-bold"}
             >
               <FaStar /> Premium
-            </button>
+            </Link>
 
             <button
               onClick={handleLogout}

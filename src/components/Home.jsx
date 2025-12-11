@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { FaBars, FaTimes, FaRobot, FaCheckCircle, FaComments, FaCrown } from 'react-icons/fa';
 import { useNavigate } from "react-router-dom";
+import Footer from './Footer';
 
 
 export default function Home() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const [mobileMenu, setMobileMenu] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -46,14 +47,14 @@ export default function Home() {
       {/* Floating Background Elements */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute top-10 left-10 w-20 h-20 bg-pink-400/20 rounded-full animate-3d-float blur-sm"></div>
-        <div className="absolute top-32 right-20 w-16 h-16 bg-purple-400/20 rounded-full animate-3d-float" style={{animationDelay: '1s'}}></div>
-        <div className="absolute bottom-20 left-1/4 w-24 h-24 bg-blue-400/20 rounded-full animate-3d-float blur-sm" style={{animationDelay: '2s'}}></div>
-        <div className="absolute bottom-40 right-10 w-12 h-12 bg-yellow-400/20 rounded-full animate-3d-float" style={{animationDelay: '0.5s'}}></div>
-        <div className="absolute top-1/2 left-1/3 w-8 h-8 bg-green-400/20 rounded-full animate-3d-float blur-sm" style={{animationDelay: '3s'}}></div>
+        <div className="absolute top-32 right-20 w-16 h-16 bg-purple-400/20 rounded-full animate-3d-float" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute bottom-20 left-1/4 w-24 h-24 bg-blue-400/20 rounded-full animate-3d-float blur-sm" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute bottom-40 right-10 w-12 h-12 bg-yellow-400/20 rounded-full animate-3d-float" style={{ animationDelay: '0.5s' }}></div>
+        <div className="absolute top-1/2 left-1/3 w-8 h-8 bg-green-400/20 rounded-full animate-3d-float blur-sm" style={{ animationDelay: '3s' }}></div>
       </div>
 
       {/* Interactive Cursor Follow Effect */}
-      <div 
+      <div
         className="fixed w-6 h-6 bg-pink-400/30 rounded-full pointer-events-none z-10 transition-all duration-200 ease-out blur-sm"
         style={{
           left: mousePosition.x - 12,
@@ -77,25 +78,25 @@ export default function Home() {
         </div>
 
         {/* Desktop Buttons */}
-       <div className="hidden md:flex gap-5 mr-12 transform hover:scale-105 transition-transform duration-300">
-  <button 
-    onClick={() => navigate("/login")} 
-    className="bg-[#ff6aa4] text-[#6236ff] px-4 py-2 rounded-full font-medium hover:bg-[#eee] hover:scale-110 transition-all duration-300 transform hover:rotate-y-6 hover:shadow-2xl"
-  >
-    Login
-  </button>
-  <button 
-    onClick={() => navigate("/register")} 
-    className="bg-[#ff6aa4] text-[#6236ff] px-4 py-2 rounded-full font-medium hover:bg-[#eee] hover:scale-110 transition-all duration-300 transform hover:rotate-y-6 hover:shadow-2xl"
-  >
-    Sign Up
-  </button>
-</div>
+        <div className="hidden md:flex gap-5 mr-12 transform hover:scale-105 transition-transform duration-300">
+          <button
+            onClick={() => navigate("/login")}
+            className="bg-[#ff6aa4] text-[#6236ff] px-4 py-2 rounded-full font-medium hover:bg-[#eee] hover:scale-110 transition-all duration-300 transform hover:rotate-y-6 hover:shadow-2xl"
+          >
+            Login
+          </button>
+          <button
+            onClick={() => navigate("/register")}
+            className="bg-[#ff6aa4] text-[#6236ff] px-4 py-2 rounded-full font-medium hover:bg-[#eee] hover:scale-110 transition-all duration-300 transform hover:rotate-y-6 hover:shadow-2xl"
+          >
+            Sign Up
+          </button>
+        </div>
 
 
         {/* Mobile Hamburger */}
         <div className="md:hidden flex items-center mr-4 z-50">
-          <button 
+          <button
             onClick={() => setMobileMenu(!mobileMenu)}
             className="transform hover:scale-110 transition-all duration-300 hover:rotate-180"
           >
@@ -111,25 +112,25 @@ export default function Home() {
       {/* Mobile Menu */}
       {mobileMenu && (
         <div className="fixed top-16 right-4 bg-white text-black rounded-lg shadow-lg z-50 flex flex-col p-4 w-40 md:hidden animate-fade-in transform scale-100 hover:scale-105 transition-all duration-300">
-  <button 
-    onClick={() => { 
-      navigate("/login"); 
-      setMobileMenu(false); 
-    }} 
-    className="mb-2 bg-pink-200 text-[#6236ff] px-4 py-2 rounded font-medium hover:bg-pink-300 transform hover:scale-105 hover:rotate-x-3 transition-all duration-300"
-  >
-    Login
-  </button>
-  <button 
-    onClick={() => { 
-      navigate("/register"); 
-      setMobileMenu(false); 
-    }} 
-    className="bg-pink-200 text-[#6236ff] px-4 py-2 rounded font-medium hover:bg-pink-300 transform hover:scale-105 hover:rotate-x-3 transition-all duration-300"
-  >
-    Sign Up
-  </button>
-</div>
+          <button
+            onClick={() => {
+              navigate("/login");
+              setMobileMenu(false);
+            }}
+            className="mb-2 bg-pink-200 text-[#6236ff] px-4 py-2 rounded font-medium hover:bg-pink-300 transform hover:scale-105 hover:rotate-x-3 transition-all duration-300"
+          >
+            Login
+          </button>
+          <button
+            onClick={() => {
+              navigate("/register");
+              setMobileMenu(false);
+            }}
+            className="bg-pink-200 text-[#6236ff] px-4 py-2 rounded font-medium hover:bg-pink-300 transform hover:scale-105 hover:rotate-x-3 transition-all duration-300"
+          >
+            Sign Up
+          </button>
+        </div>
       )}
 
       {/* HERO SECTION */}
@@ -138,18 +139,18 @@ export default function Home() {
           Find Your <br />
           <span className="text-[#ce759a] animate-heartbeat transform hover:rotate-y-12 transition-all duration-500 inline-block">Perfect Match </span>
         </div>
-        <p className="text-lg mb-8 transform hover:scale-105 transition-all duration-300 animate-fade-in" style={{animationDelay: '0.2s'}}>
+        <p className="text-lg mb-8 transform hover:scale-105 transition-all duration-300 animate-fade-in" style={{ animationDelay: '0.2s' }}>
           Join millions of people finding meaningful relationships through <br /> our AI-powered matching system.
         </p>
-        <div className="flex justify-center gap-4 flex-wrap animate-fade-in" style={{animationDelay: '0.4s'}}>
-         <button 
-  onClick={() => navigate("/register")} 
-  className="bg-[#eb709f] text-[#6236ff] px-6 py-3 rounded-lg font-bold hover:bg-[#e0e0ff] hover:scale-110 transition-all duration-300 transform hover:rotate-y-6 hover:shadow-2xl"
->
-  Start Your Journey ⟶
-</button>
-          <a 
-            href="#why" 
+        <div className="flex justify-center gap-4 flex-wrap animate-fade-in" style={{ animationDelay: '0.4s' }}>
+          <button
+            onClick={() => navigate("/register")}
+            className="bg-[#eb709f] text-[#6236ff] px-6 py-3 rounded-lg font-bold hover:bg-[#e0e0ff] hover:scale-110 transition-all duration-300 transform hover:rotate-y-6 hover:shadow-2xl"
+          >
+            Start Your Journey ⟶
+          </button>
+          <a
+            href="#why"
             className="border-2 border-white text-white px-6 py-3 rounded-lg font-bold hover:bg-white/10 hover:scale-110 transition-all duration-300 transform hover:rotate-y-6 hover:shadow-2xl"
           >
             Learn More
@@ -159,24 +160,24 @@ export default function Home() {
         {/* 3D Floating Hearts */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-20 right-10 text-6xl text-pink-400/50 animate-3d-float transform hover:scale-125 transition-all duration-300">💝</div>
-          <div className="absolute bottom-32 left-10 text-4xl text-purple-400/50 animate-3d-float transform hover:scale-125 transition-all duration-300" style={{animationDelay: '1s'}}>💕</div>
-          <div className="absolute top-1/2 right-1/4 text-5xl text-yellow-400/50 animate-3d-float transform hover:scale-125 transition-all duration-300" style={{animationDelay: '2s'}}>💖</div>
-          <div className="absolute bottom-20 right-20 text-3xl text-green-400/50 animate-3d-float transform hover:scale-125 transition-all duration-300" style={{animationDelay: '0.5s'}}>💗</div>
+          <div className="absolute bottom-32 left-10 text-4xl text-purple-400/50 animate-3d-float transform hover:scale-125 transition-all duration-300" style={{ animationDelay: '1s' }}>💕</div>
+          <div className="absolute top-1/2 right-1/4 text-5xl text-yellow-400/50 animate-3d-float transform hover:scale-125 transition-all duration-300" style={{ animationDelay: '2s' }}>💖</div>
+          <div className="absolute bottom-20 right-20 text-3xl text-green-400/50 animate-3d-float transform hover:scale-125 transition-all duration-300" style={{ animationDelay: '0.5s' }}>💗</div>
         </div>
       </header>
 
       {/* WHY SECTION */}
       <section id="why" className="py-24 text-center bg-gradient-to-br from-[#182384] to-[#ad738b] text-white px-4 relative">
         <h2 className="text-3xl font-semibold transform hover:scale-105 transition-all duration-300 animate-fade-in">Why Choose SoulConnect?</h2>
-        <p className="mt-2 transform hover:scale-105 transition-all duration-300 animate-fade-in" style={{animationDelay: '0.1s'}}>
+        <p className="mt-2 transform hover:scale-105 transition-all duration-300 animate-fade-in" style={{ animationDelay: '0.1s' }}>
           Experience the future of online dating with our <br /> innovative features designed to help you find lasting love.
         </p>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mt-10 w-4/5 mx-auto">
           {features.map((item, idx) => (
-            <div 
-              key={idx} 
+            <div
+              key={idx}
               className="group p-6 rounded-lg shadow-md bg-white/10 transition-all duration-500 hover:scale-110 hover:rotate-y-6 text-center transform hover:shadow-2xl hover:bg-white/20 backdrop-blur-sm animate-fade-in"
-              style={{animationDelay: `${0.2 + idx * 0.1}s`}}
+              style={{ animationDelay: `${0.2 + idx * 0.1}s` }}
             >
               {item.icon}
               <h3 className="text-xl font-semibold mb-2 transform group-hover:scale-105 transition-all duration-300">{item.title}</h3>
@@ -189,7 +190,7 @@ export default function Home() {
       {/* SUCCESS STORIES */}
       <section className="py-24 text-center bg-gradient-to-br from-[#182384] to-[#ad738b] text-white px-4 relative">
         <h2 className="text-3xl font-semibold transform hover:scale-105 transition-all duration-300 animate-fade-in">Success Stories</h2>
-        <p className="mt-2 transform hover:scale-105 transition-all duration-300 animate-fade-in" style={{animationDelay: '0.1s'}}>
+        <p className="mt-2 transform hover:scale-105 transition-all duration-300 animate-fade-in" style={{ animationDelay: '0.1s' }}>
           Real couples who found love through SoulConnect.
         </p>
         <div className="grid md:grid-cols-3 gap-6 mt-10 w-4/5 mx-auto">
@@ -213,7 +214,7 @@ export default function Home() {
             <div
               key={idx}
               className="group p-6 rounded-lg shadow-md bg-white/10 transition-all duration-500 hover:scale-110 hover:rotate-y-6 transform hover:shadow-2xl hover:bg-white/20 backdrop-blur-sm animate-fade-in"
-              style={{animationDelay: `${0.2 + idx * 0.1}s`}}
+              style={{ animationDelay: `${0.2 + idx * 0.1}s` }}
             >
               <div className="flex items-center justify-center gap-3 mb-2">
                 <img
@@ -233,26 +234,20 @@ export default function Home() {
       {/* CTA */}
       <section className="text-center py-24 bg-gradient-to-br from-[#182384] to-[#ad738b] text-white px-4 relative">
         <h2 className="text-3xl font-semibold transform hover:scale-105 transition-all duration-300 animate-fade-in">Ready to Find Love?</h2>
-        <p className="mt-2 transform hover:scale-105 transition-all duration-300 animate-fade-in" style={{animationDelay: '0.1s'}}>
+        <p className="mt-2 transform hover:scale-105 transition-all duration-300 animate-fade-in" style={{ animationDelay: '0.1s' }}>
           Join thousands of successful couples who found their soulmate on SoulConnect.
         </p>
         <button
-  onClick={() => navigate("/register")}
-  className="inline-block mt-6 bg-[#eb709f] text-[#6236ff] px-6 py-3 rounded-lg font-bold hover:bg-[#e0e0ff] hover:scale-110 transition-all duration-300 transform hover:rotate-y-6 hover:shadow-2xl animate-fade-in"
-  style={{ animationDelay: '0.2s' }}
->
-  Get Started Today ⟶
-</button>
+          onClick={() => navigate("/register")}
+          className="inline-block mt-6 bg-[#eb709f] text-[#6236ff] px-6 py-3 rounded-lg font-bold hover:bg-[#e0e0ff] hover:scale-110 transition-all duration-300 transform hover:rotate-y-6 hover:shadow-2xl animate-fade-in"
+          style={{ animationDelay: '0.2s' }}
+        >
+          Get Started Today ⟶
+        </button>
       </section>
 
       {/* FOOTER */}
-      <footer className="w-full text-center py-6 bg-gradient-to-br from-[#182384] to-[#ce759a] text-[#d66efb] mt-auto relative">
-        <div className="flex justify-center gap-6 text-2xl">
-          <a href="#" className="text-[#eb709f] hover:text-[#ff91b8] transform transition-all duration-300 hover:scale-125 hover:rotate-12"><i className='bx bxl-github'></i></a>
-          <a href="#" className="text-[#eb709f] hover:text-[#ff91b8] transform transition-all duration-300 hover:scale-125 hover:rotate-12"><i className='bx bxl-linkedin'></i></a>
-          <a href="#" className="text-[#eb709f] hover:text-[#ff91b8] transform transition-all duration-300 hover:scale-125 hover:rotate-12"><i className='bx bxl-whatsapp'></i></a>
-        </div>
-      </footer>
+      <Footer />
 
       {/* Enhanced Animations */}
       <style>{`

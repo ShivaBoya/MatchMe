@@ -10,16 +10,16 @@ import Signup from "./components/Signup";
 import Dashboard from "./components/Dashboard";
 import Matches from "./pages/Matches";
 import Messages from "./pages/Messages";
-import PremiumPopup from "./pages/Premium";
+import Premium from "./pages/Premium"; // Simplified import
 import Navbar from "./components/Navbar";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
-import Discover from "./pages/Discover";
+import Discover from "./pages/Discover"; // Correct import path
+
 function App() {
   const [user, setUser] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [showPremium, setShowPremium] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [profileMenu, setProfileMenu] = useState(false);
 
@@ -68,7 +68,6 @@ function App() {
             user={user}
             userProfile={userProfile}
             setUserProfile={setUserProfile}
-            setShowPremium={setShowPremium}
             handleLogout={handleLogout}
             showMenu={showMenu}
             setShowMenu={setShowMenu}
@@ -76,8 +75,6 @@ function App() {
             setProfileMenu={setProfileMenu}
           />
         )}
-
-        {showPremium && <PremiumPopup onClose={() => setShowPremium(false)} />}
 
         <div className={user ? "pt-20" : ""}>
           <Routes>
@@ -92,7 +89,7 @@ function App() {
             <Route path="/matches" element={user ? <Matches user={user} /> : <Navigate to="/login" />} />
             <Route path="/messages/:userId" element={user ? <Messages user={user} /> : <Navigate to="/login" />} />
             <Route path="/messages" element={user ? <Messages user={user} /> : <Navigate to="/login" />} />
-
+            <Route path="/premium" element={user ? <Premium /> : <Navigate to="/login" />} />
 
             <Route
               path="/profile"
